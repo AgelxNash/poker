@@ -1,4 +1,3 @@
-
 <?php
 
 namespace App\Events;
@@ -16,17 +15,19 @@ class VoteStatusChanged implements ShouldBroadcast
     public string $roundId;
     public string $userIdMasked;
     public string $status;
+    public string $roomId;
 
-    public function __construct(string $roundId, string $userId, string $status)
+    public function __construct(string $roundId, string $roomId, string $userId, string $status)
     {
         $this->roundId = $roundId;
+        $this->roomId = $roomId;
         $this->userIdMasked = substr($userId, 0, 8);
         $this->status = $status;
     }
 
     public function broadcastOn(): Channel
     {
-        return new Channel('room.general');
+        return new Channel('room.' . $this->roomId);
     }
 
     public function broadcastAs(): string

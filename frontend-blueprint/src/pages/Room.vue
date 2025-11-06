@@ -1,12 +1,16 @@
-
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useRoute } from 'vue-router'
 import VotePad from '../components/VotePad.vue'
 import RevealPanel from '../components/RevealPanel.vue'
 import TimerBar from '../components/TimerBar.vue'
+import { echo } from '../echo'
 
 const revealed = ref(false)
 const votes = ref([])
+const stats = ref(null)
+const route = useRoute()
+let channel
 
 const onVoted = (v) => {
   console.log('voted', v)
@@ -14,8 +18,24 @@ const onVoted = (v) => {
 
 const onReveal = () => {
   revealed.value = true
-  votes.value = [] // fetch from API in future
+  // will be updated by socket event
 }
+
+onMounted(() => {
+  const roomId = route.params.id
+  channel = echo.channel(`room.${roomId}`)
+    .listen('.vote.status', (e) => {
+      console.debug('vote.status', e)
+    })
+    .listen('.round.revealed', (e) => {
+      revealed.value = true
+      votes.value = e.votes || []
+      stats.value = e.stats || null
+    })
+})
+onBeforeUnmount(() => {
+  if (channel) echo.leaveChannel(channel.name)
+})
 </script>
 
 <template>
@@ -31,6 +51,13 @@ const onReveal = () => {
     </div>
     <div class="space-y-4">
       <RevealPanel v-if="revealed" :votes="votes" />
+      <div v-if="stats" class="border rounded p-3 bg-white text-sm">
+        <div class="font-semibold mb-2">Stats</div>
+        <div>Count: {{ stats.numeric.count }}</div>
+        <div>Min/Max: {{ stats.numeric.min }} / {{ stats.numeric.max }}</div>
+        <div>Avg/Median: {{ stats.numeric.avg }} / {{ stats.numeric.median }}</div>
+        <div>Stdev: {{ stats.numeric.stdev }}</div>
+      </div>
       <div class="border rounded p-3 bg-white">Right panel: distribution / chat</div>
     </div>
   </div>

@@ -1,4 +1,3 @@
-
 <?php
 
 namespace App\Events;
@@ -15,16 +14,21 @@ class RoundRevealed implements ShouldBroadcast
 
     public string $roundId;
     public array $votes;
+    public string $roomId;
+    /** @var array{histogram: array<string,int>, numeric: array{count:int,min:float|null,max:float|null,avg:float|null,median:float|null,stdev:float|null}} */
+    public array $stats;
 
-    public function __construct(string $roundId, array $votes)
+    public function __construct(string $roundId, string $roomId, array $votes, array $stats = [])
     {
         $this->roundId = $roundId;
+        $this->roomId = $roomId;
         $this->votes = $votes;
+        $this->stats = $stats;
     }
 
     public function broadcastOn(): Channel
     {
-        return new Channel('room.general');
+        return new Channel('room.' . $this->roomId);
     }
 
     public function broadcastAs(): string
