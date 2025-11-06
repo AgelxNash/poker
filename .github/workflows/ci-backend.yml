@@ -1,0 +1,30 @@
+name: CI Backend
+on:
+  push:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/ci-backend.yml'
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/ci-backend.yml'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+      - name: Composer install
+        working-directory: backend
+        run: |
+          php -v
+          composer --version || true
+          composer install || true
+      - name: Syntax check
+        working-directory: backend
+        run: |
+          find public src -type f -name '*.php' -print0 | xargs -0 -n1 -I{} php -l {}
