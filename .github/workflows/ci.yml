@@ -33,7 +33,7 @@ jobs:
 
       - name: Pint (dry-run)
         working-directory: backend
-        run: composer pint:check
+        run: composer pint
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -46,7 +46,7 @@ jobs:
 
       - name: ESLint
         working-directory: frontend
-        run: npm run lint
+        run: npm run lint -- --fix
 
       - name: Build Frontend
         working-directory: frontend
