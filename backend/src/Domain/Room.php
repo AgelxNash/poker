@@ -9,7 +9,8 @@ final class Room implements \JsonSerializable
         public string $name,
         public \DateTimeImmutable $createdAt
     ) {}
-
+    
+    /** @return array<string,mixed> */
     public function jsonSerialize(): array
     {
         return [
