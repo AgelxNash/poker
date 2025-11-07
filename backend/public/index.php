@@ -33,7 +33,7 @@ switch ($routeInfo[0]) {
         [$class, $method] = $routeInfo[1];
         $handler = new $class();
         $res = $handler->$method($request);
-        if (!$res instanceof Response\ResponseInterface) {
+        if (!$res instanceof Psr\Http\Message\ResponseInterface) {
             $res = new JsonResponse($res, 200);
         }
         break;
