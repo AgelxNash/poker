@@ -1,8 +1,5 @@
-
 <?php
-
 declare(strict_types=1);
-
 namespace Poker\Controllers;
 
 use Laminas\Diactoros\Response\JsonResponse;

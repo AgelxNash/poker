@@ -1,8 +1,5 @@
-
 <?php
-
 declare(strict_types=1);
-
 namespace Poker\Domain;
 
 final class RoomRepository
